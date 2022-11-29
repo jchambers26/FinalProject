@@ -1,0 +1,11 @@
+// This file implements the initialization of the PIR motion detector.
+// ----------------------------------------------------------------- //
+
+#include "pir.h"
+#include <avr/io.h>
+
+//initialize the PIR motion detector as an input from port H6
+void initPIR() {
+    DDRH &= ~(1 << PORTH6);
+}
+

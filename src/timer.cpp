@@ -49,5 +49,44 @@ void delayMs(unsigned int delay){
     // turn clock off
     TCCR0B  &= ~ ((1 << CS00) | (1 << CS01) | ( 1 << CS02));
 
-    
+}
+
+// Initialize Timer 1 for CTC mode //
+void initTimer1(){
+	//specify WGM bits for CTC mode
+    //for CTC mode, WGM10 = 0, WGM11 = 0, WGM12 = 1, WGM13 = 0
+    TCCR1A &= ~(1 << WGM10);
+    TCCR1A &= ~(1 << WGM11);
+    TCCR1B|= (1 << WGM12);
+    TCCR1B &= ~(1 << WGM13);
+}
+
+/* This delays the program an amount of microseconds specified by unsigned int delay.
+*/
+void delayUs(unsigned int delay){
+    unsigned int count = 0;
+
+//calculate value goes to OCR0A per ms delay (OCR0A = 2) and a 8 prescalar
+//OCR1A = 2;
+OCR1AH = 0;
+OCR1AL = 2;
+
+//set prescalar to 8 to start timer
+TCCR1B |= (1 << CS11);
+TCCR1B &= ~((1 << CS12) | (1 << CS10));
+
+while(count < delay){
+    //set flag down (logic = 1)
+    TIFR1 |= (1 << OCF1A);
+
+    //clear timer
+    TCNT1 = 0;
+
+    //loop until flag is changed (logic = 0)
+    while(!(TIFR1 & (1 << OCF1A)));
+    //exit loop when flag changes
+
+    count++;
+    // turn timer off
+    }
 }
