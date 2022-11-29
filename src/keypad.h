@@ -1,6 +1,7 @@
 #ifndef KEYPAD_H
 #define KEYPAD_H
 void initKeypad();
-void setColumnHigh(unsigned char col);
+void setColumnLow(unsigned char col);
+int checkRows();
 
 #endif
