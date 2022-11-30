@@ -5,5 +5,7 @@
 
 void initTimer0();
 void delayMs(unsigned int delay);
+void initTimer1();
+void delayUs(unsigned int delay);
 
 #endif

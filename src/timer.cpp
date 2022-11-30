@@ -63,7 +63,7 @@ void initTimer1(){
 
 /* This delays the program an amount of microseconds specified by unsigned int delay.
 */
-void delayUs(unsigned int delay){
+void delayUs(unsigned int delay) {
     unsigned int count = 0;
 
 //calculate value goes to OCR0A per ms delay (OCR0A = 2) and a 8 prescalar

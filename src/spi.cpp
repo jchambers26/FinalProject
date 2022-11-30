@@ -47,17 +47,17 @@ void writeSPI(unsigned char command, unsigned char data) {
 
 }
 
-void clear() {
+void clearSPI() {
 
     // Clear all rows
-    for (int i = 1; i < 9; i++) {
-        writeSPI(i, 0x00);
+    for (int i = 1; i <= 9; i++) {
+        writeSPI(i, 0b00000000);
     }
 
 }
 
 void writeNumber(int num){ // we may not need this 
-    clear();
+    clearSPI();
     switch(num){
         case 0:
             writeSPI(1, 0x3C);
@@ -162,4 +162,36 @@ void writeNumber(int num){ // we may not need this
         default:
             break;
     }
+}
+
+void writeSmileyFace(){
+
+    clearSPI();
+
+    // Write to the LED matrix line by line to assign which LEDs turn on
+    writeSPI(0x01, 0b00100100); 
+    writeSPI(0x02, 0b00100100); 
+    writeSPI(0x03, 0b00100100); 
+    writeSPI(0x04, 0b00100100); 
+    writeSPI(0x05, 0b00000000); 
+    writeSPI(0x06, 0b10000001); 
+    writeSPI(0x07, 0b01000010); 
+    writeSPI(0x08, 0b00111100); 
+
+}
+
+void writeSadFace(){
+
+    clearSPI();
+
+    // Write to the LED matrix line by line to assign which LEDs turn on
+    writeSPI(0x01, 0b00100100); 
+    writeSPI(0x02, 0b00100100); 
+    writeSPI(0x03, 0b00100100); 
+    writeSPI(0x04, 0b00100100); 
+    writeSPI(0x05, 0b00000000); 
+    writeSPI(0x06, 0b00111100);
+    writeSPI(0x07, 0b01000010); 
+    writeSPI(0x08, 0b10000001);
+
 }

@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "keypad.h"
 #include "timer.h"
+#include "spi.h"
 
 
 const byte ROWS = 4; //four rows
@@ -27,24 +28,28 @@ stateType states[4] = {state1, state2, state3, state4};
 
 
 int main() {
-
 	sei();
 	
 	Serial.begin(9600);
 	initKeypad();
 	initTimer0();
+	initSPI();
+	clearSPI();
+	writeSmileyFace();
 
 	while(1) {
 
 		setColumnLow(col);
-		col++;
-		if(col > 3) {
-			col = 0;
-		}
 
 		int row = checkRows();
 		if(row != -1) {
+
+			if ((row < 3 && col < 3) || (row == 3 && col == 1)) {
+				writeNumber(keys[row][col] - '0');	
+			}
 			Serial.println(keys[row][col]);
+
+			while (checkRows() == row);
 		}
 
 
@@ -64,6 +69,11 @@ int main() {
 					states[i] = wait_press;
 					break;
 			}
+		}
+
+		col++;
+		if(col > 3) {
+			col = 0;
 		}
 	}
 
