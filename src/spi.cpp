@@ -163,35 +163,3 @@ void writeNumber(int num){ // we may not need this
             break;
     }
 }
-
-void writeSmileyFace(){
-
-    clearSPI();
-
-    // Write to the LED matrix line by line to assign which LEDs turn on
-    writeSPI(0x01, 0b00100100); 
-    writeSPI(0x02, 0b00100100); 
-    writeSPI(0x03, 0b00100100); 
-    writeSPI(0x04, 0b00100100); 
-    writeSPI(0x05, 0b00000000); 
-    writeSPI(0x06, 0b10000001); 
-    writeSPI(0x07, 0b01000010); 
-    writeSPI(0x08, 0b00111100); 
-
-}
-
-void writeSadFace(){
-
-    clearSPI();
-
-    // Write to the LED matrix line by line to assign which LEDs turn on
-    writeSPI(0x01, 0b00100100); 
-    writeSPI(0x02, 0b00100100); 
-    writeSPI(0x03, 0b00100100); 
-    writeSPI(0x04, 0b00100100); 
-    writeSPI(0x05, 0b00000000); 
-    writeSPI(0x06, 0b00111100);
-    writeSPI(0x07, 0b01000010); 
-    writeSPI(0x08, 0b10000001);
-
-}

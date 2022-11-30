@@ -35,7 +35,6 @@ int main() {
 	initTimer0();
 	initSPI();
 	clearSPI();
-	writeSmileyFace();
 
 	while(1) {
 
