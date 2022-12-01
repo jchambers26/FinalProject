@@ -56,6 +56,38 @@ void clearSPI() {
 
 }
 
+void writeX() {
+
+    Serial.println("Writing X");
+
+    clearSPI();
+    // Write X to the matrix
+    writeSPI(1, 0b10000001);
+    writeSPI(2, 0b01000010);
+    writeSPI(3, 0b00100100);
+    writeSPI(4, 0b00011000);
+    writeSPI(5, 0b00011000);
+    writeSPI(6, 0b00100100);
+    writeSPI(7, 0b01000010);
+    writeSPI(8, 0b10000001);
+}
+
+void writeCheck() {
+
+    Serial.println("Writing check");
+    
+    clearSPI();
+    // Write check to the matrix
+    writeSPI(1, 0b00000000);
+    writeSPI(2, 0b00000000);
+    writeSPI(3, 0b00000001);
+    writeSPI(4, 0b00000010);
+    writeSPI(5, 0b00000100);
+    writeSPI(6, 0b10001000);
+    writeSPI(7, 0b01010000);
+    writeSPI(8, 0b00100000);
+}
+
 void writeNumber(int num){ // we may not need this 
     clearSPI();
     switch(num){

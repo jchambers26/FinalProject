@@ -40,6 +40,7 @@ int main() {
 	initTimer0();
 	initSPI();
 	clearSPI();
+	writeX();
 	
 	// Variables for the keypad and password
 	passwordState state = waitInitial;
@@ -73,8 +74,10 @@ int main() {
 				Serial.println("Correct");
 				lock = (lock == locked) ? unlocked : locked;
 				if (lock == unlocked) {
+					writeCheck();
 					Serial.println("Unlocked");
 				} else {
+					writeX();
 					Serial.println("Locked");
 				}
 			}
