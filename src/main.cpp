@@ -12,18 +12,17 @@ char keys[ROWS][COLS] = {
   {'7','8','9','C'},
   {'*','0','#','D'}
 };
-volatile unsigned char col = 0;
 
-typedef enum stateType_enum {
-  wait_press, debounce_press, wait_release, debounce_release
-} stateType;
-
-volatile stateType state1 = wait_press;
-volatile stateType state2 = wait_press;
-volatile stateType state3 = wait_press;
-volatile stateType state4 = wait_press;
-
-stateType states[4] = {state1, state2, state3, state4};
+typedef enum passwordState {
+	waitInitial,
+	checkSecond,
+	checkThird,
+	checkFourth,
+	setFirst,
+	setSecond,
+	setThird,
+	setFourth
+};
 
 
 
@@ -35,39 +34,104 @@ int main() {
 	initTimer0();
 	initSPI();
 	clearSPI();
+	
+	passwordState state = waitInitial;
+	unsigned char col = 0;
+
+	char password[4];
+	password[0] = '0';
+	password[1] = '0';
+	password[2] = '0';
+	password[3] = '0';
+	char checkPassword[4];
+
+	bool doCheck = false;
+
 
 	while(1) {
+
+		if (doCheck) {
+
+			bool correct = true;
+			for (int i = 0; i < 4; i++) {
+				if (checkPassword[i] != password[i]) {
+					correct = false;
+				}
+			}
+			if (correct) {
+				Serial.println("Correct");
+			}
+			else {
+				Serial.println("Incorrect");
+				Serial.println("Expected: [" + String(password[0]) + String(password[1]) + String(password[2]) + String(password[3]) + "]");
+				Serial.println("Got: [" + String(checkPassword[0]) + String(checkPassword[1]) + String(checkPassword[2]) + String(checkPassword[3]) + "]");
+			}
+			doCheck = false;
+		}
 
 		setColumnLow(col);
 
 		int row = checkRows();
 		if(row != -1) {
 
-			if ((row < 3 && col < 3) || (row == 3 && col == 1)) {
-				writeNumber(keys[row][col] - '0');	
-			}
-			Serial.println(keys[row][col]);
+			char pressed = keys[row][col];
+			Serial.println(pressed);
 
 			while (checkRows() == row);
-		}
+
+			switch(state) {
+
+				case(waitInitial):
+					if(pressed == '#') {
+						state = setFirst;
+					}
+					else {
+						checkPassword[0] = pressed;
+						state = checkSecond;
+					}
+					break;
+
+				case(checkSecond):
+					checkPassword[1] = pressed;
+					state = checkThird;
+					break;
+				
+				case(checkThird):
+					checkPassword[2] = pressed;
+					state = checkFourth;
+					break;
+				
+				case(checkFourth):
+					checkPassword[3] = pressed;
+					doCheck = true;
+					state = waitInitial;
+					break;
+				
+				case(setFirst):
+					password[0] = pressed;
+					state = setSecond;
+					break;
+
+				case(setSecond):
+					password[1] = pressed;
+					state = setThird;
+					break;
+
+				case(setThird):
+					password[2] = pressed;
+					state = setFourth;
+					break;
+
+				case(setFourth):
+					password[3] = pressed;
+					state = waitInitial;
+					break;
+				
 
 
-
-		for (int i = 0; i < 4; i++) {
-			switch(states[i]) {
-				case wait_press:
-					break;
-				case debounce_press:
-					delayMs(1);
-					states[i] = wait_release;
-					break;
-				case wait_release:
-					break;
-				case debounce_release:
-					delayMs(1);
-					states[i] = wait_press;
-					break;
 			}
+
+
 		}
 
 		col++;
@@ -79,43 +143,3 @@ int main() {
 	return 1;
 
 }
-
-// ISR(INT0_vect) {
-// 	if (state1 == wait_press) {
-// 		Serial.println(keys[0][col]);
-// 		state1 = debounce_press;
-// 	}
-// 	else if (state1 == wait_release) {
-// 		state1 = debounce_release;
-// 	}
-// }
-
-// ISR(INT1_vect) {
-// 	if (state2 == wait_press) {
-// 		Serial.println(keys[1][col]);
-// 		state2 = debounce_press;
-// 	}
-// 	else if (state2 == wait_release) {
-// 		state2 = debounce_release;
-// 	}
-// }
-
-// ISR(INT2_vect) {
-// 	if (state3 == wait_press) {
-// 		Serial.println(keys[2][col]);
-// 		state3 = debounce_press;
-// 	}
-// 	else if (state3 == wait_release) {
-// 		state3 = debounce_release;
-// 	}
-// }
-
-// ISR(INT3_vect) {
-// 	if (state4 == wait_press) {
-// 		Serial.println(keys[3][col]);
-// 		state4 = debounce_press;
-// 	}
-// 	else if (state4 == wait_release) {
-// 		state4 = debounce_release;
-// 	}
-// }
