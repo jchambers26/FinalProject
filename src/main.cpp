@@ -2,6 +2,9 @@
 #include "keypad.h"
 #include "timer.h"
 #include "spi.h"
+#include "lcd.h"
+#include "pir.h"
+#include "Servo.h"
 
 
 const byte ROWS = 4; //four rows
