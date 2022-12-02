@@ -36,15 +36,27 @@ typedef enum lockState {
 
 int main() {
 	
+	//initialize a counter
+	int cnt = 0;
+	bool motion = false;
+
 	sei();
 	
 	Serial.begin(9600);
 	initKeypad();
 	initTimer0();
+	initTimer1();
+	initLCD();
+	initPIR();
 	initSPI();
 	clearSPI();
-	initLCD();
 	writeX();
+
+	//initial write to the LCD
+	moveCursor(0, 0); // moves the cursor to 0,0 position
+  	writeString("Times Opened:");
+  	moveCursor(1, 0);  // moves the cursor to 1,0 position
+  	writeString("0");
 	
 	// Variables for the keypad and password
 	passwordState state = waitInitial;
@@ -58,12 +70,6 @@ int main() {
 	bool doCheck = false;
 
 	lockState lock = locked;
-
-	moveCursor(0, 0);
-	writeString("Door Locked");
-	moveCursor(1, 0);
-	writeString("Enter Passcode");
-
 
 
 	while(1) {
@@ -86,6 +92,21 @@ int main() {
 				if (lock == unlocked) {
 					writeCheck();
 					Serial.println("Unlocked");
+					moveCursor(1, 0);  // moves the cursor to 1,0 position
+    				//writeString(cnt); <----- this line of code has problems with typecasting int to const char*
+    				if (!(PINH & (1 << PINH6))) {
+        				if (motion == true) {
+          					Serial.println("motion ended");
+          					motion = false;
+          					cnt = cnt + 1;
+        					}
+      					}
+      					else {
+       						if (motion == false) {
+            				Serial.println("motion detected");
+            				motion = true;
+          				}
+      				}
 				} else {
 					writeX();
 					Serial.println("Locked");
