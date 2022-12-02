@@ -93,7 +93,10 @@ int main() {
 					writeCheck();
 					Serial.println("Unlocked");
 					moveCursor(1, 0);  // moves the cursor to 1,0 position
-    				//writeString(cnt); <----- this line of code has problems with typecasting int to const char*
+
+					char cntStr[cnt%10+1];
+					sprintf(cntStr, "%d", cnt);
+    				writeString(cntStr);
     				if (!(PINH & (1 << PINH6))) {
         				if (motion == true) {
           					Serial.println("motion ended");
