@@ -43,6 +43,7 @@ int main() {
 	initTimer0();
 	initSPI();
 	clearSPI();
+	initLCD();
 	writeX();
 	
 	// Variables for the keypad and password
@@ -57,6 +58,12 @@ int main() {
 	bool doCheck = false;
 
 	lockState lock = locked;
+
+	moveCursor(0, 0);
+	writeString("Door Locked");
+	moveCursor(1, 0);
+	writeString("Enter Passcode");
+
 
 
 	while(1) {
