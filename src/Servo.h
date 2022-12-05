@@ -1,6 +1,6 @@
 #include <util/delay.h>
 #include <Arduino.h>
 
-void InitServo();
+void Init_Servo();
 void lock();
 void unlock();

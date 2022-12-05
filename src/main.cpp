@@ -51,6 +51,7 @@ int main() {
 	initSPI();
 	clearSPI();
 	writeX();
+	Init_Servo();
 
 	//initial write to the LCD
 	moveCursor(0, 0); // moves the cursor to 0,0 position
@@ -74,6 +75,16 @@ int main() {
 
 	while(1) {
 
+		if (!(PINH & (1 << PINH6)) && motion == true) {
+			Serial.println("Motion detected");
+			motion = false;
+			cnt++;
+			char cntStr[cnt%10+1];
+			sprintf(cntStr, "%d", cnt);
+			moveCursor(1, 0);
+			writeString(cntStr);
+		}
+
 		// If we are supposed to check the entered password against the stored one, do so
 		if (doCheck) {
 
@@ -92,26 +103,23 @@ int main() {
 				if (lock == unlocked) {
 					writeCheck();
 					Serial.println("Unlocked");
-					moveCursor(1, 0);  // moves the cursor to 1,0 position
+					motion = true;
+					// moveCursor(1, 0);  // moves the cursor to 1,0 position
+    				// if (!(PINH & (1 << PINH6))) {
 
-					char cntStr[cnt%10+1];
-					sprintf(cntStr, "%d", cnt);
-    				writeString(cntStr);
-    				if (!(PINH & (1 << PINH6))) {
-        				if (motion == true) {
-          					Serial.println("motion ended");
-          					motion = false;
-          					cnt = cnt + 1;
-        					}
-      					}
-      					else {
-       						if (motion == false) {
-            				Serial.println("motion detected");
-            				motion = true;
-          				}
-      				}
+					// 	Serial.println("motion detected");
+					// 	motion = false;
+					// 	cnt = cnt + 1;
+
+					// 	char cntStr[cnt%10+1];
+					// 	sprintf(cntStr, "%d", cnt);
+					// 	writeString(cntStr);
+					// 	Serial.println(cntStr);
+        			// }		
+      				
 				} else {
 					writeX();
+					motion = false;
 					Serial.println("Locked");
 				}
 			}
