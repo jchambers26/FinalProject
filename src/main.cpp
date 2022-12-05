@@ -52,7 +52,8 @@ int main() {
 	clearSPI();
 	writeX();
 	Init_Servo();
-	lock_s();
+	lockDoor();
+	Serial.println("DEBUG: Door locked");
 
 	//initial write to the LCD
 	moveCursor(0, 0); // moves the cursor to 0,0 position
@@ -105,7 +106,7 @@ int main() {
 				Serial.println("DEBUG: Correct");
 				lock = (lock == locked) ? unlocked : locked;
 				if (lock == unlocked) {
-					unlock_s();
+					unlockDoor();
 					writeCheck();
 					Serial.println("DEBUG: Unlocked");
 					motion = true;
@@ -123,7 +124,7 @@ int main() {
         			// }		
       				
 				} else {
-					lock_s();
+					lockDoor();
 					writeX();
 					motion = false;
 					Serial.println("DEBUG: Locked");

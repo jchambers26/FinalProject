@@ -5,9 +5,32 @@
 
 void Init_Servo(){
 
-  DDRH |= (1 << DDH5); // set as output
-  PORTH &= ~(1 << PH5); // set as low
+    DDRH |= (1 << DDH5); // set as output
+    PORTH &= ~(1 << PH5); // set as low
+
+    TCCR4A |= (1<<WGM40) | (1<<WGM41);
+    TCCR4B |= (1<<WGM42) | (1<<WGM43);
+    // table 17-4, Fast PWM non-inverting mode
+    TCCR4A &= ~(1<<COM4C0);
+    TCCR4A |= (1<<COM4C1);
+
+    TCCR4B |= (1<<CS42);
+    TCCR4B &= ~((1<<CS41) | (1<<CS40));
+    // Pin 8
+    DDRH |= (1<<DDH5);
+
+    OCR4A = 1249;
+
+
   
+}
+
+void lockDoor() {
+    OCR4C = 20;
+}
+
+void unlockDoor() {
+    OCR4C = 150;
 }
 
 void lock_s(){
