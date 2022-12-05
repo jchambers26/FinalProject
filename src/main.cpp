@@ -52,6 +52,7 @@ int main() {
 	clearSPI();
 	writeX();
 	Init_Servo();
+	lock_s();
 
 	//initial write to the LCD
 	moveCursor(0, 0); // moves the cursor to 0,0 position
@@ -75,8 +76,11 @@ int main() {
 
 	while(1) {
 
-		if (!(PINH & (1 << PINH6)) && motion == true) {
-			Serial.println("Motion detected");
+
+		// If the door is unlocked and motion is detected for the firs time since unlock, increment the count
+		// and update the LCD display
+		if (checkPIR() && motion == true) {
+			Serial.println("DEBUG: Motion detected");
 			motion = false;
 			cnt++;
 			char cntStr[cnt%10+1];
@@ -96,13 +100,14 @@ int main() {
 				}
 			}
 
-			// TODO: HANDLE STUFF WITH SERVO, LED MATRIX
+			// If the password is correct, toggle the lock state and update the LED matrix display
 			if (correct) {
-				Serial.println("Correct");
+				Serial.println("DEBUG: Correct");
 				lock = (lock == locked) ? unlocked : locked;
 				if (lock == unlocked) {
+					unlock_s();
 					writeCheck();
-					Serial.println("Unlocked");
+					Serial.println("DEBUG: Unlocked");
 					motion = true;
 					// moveCursor(1, 0);  // moves the cursor to 1,0 position
     				// if (!(PINH & (1 << PINH6))) {
@@ -118,16 +123,17 @@ int main() {
         			// }		
       				
 				} else {
+					lock_s();
 					writeX();
 					motion = false;
-					Serial.println("Locked");
+					Serial.println("DEBUG: Locked");
 				}
 			}
 			// TODO: HANDLE LED MATRIX, LCD???
 			else {
-				Serial.println("Incorrect");
-				Serial.println("Expected: [" + String(password[0]) + String(password[1]) + String(password[2]) + String(password[3]) + "]");
-				Serial.println("Got: [" + String(checkPassword[0]) + String(checkPassword[1]) + String(checkPassword[2]) + String(checkPassword[3]) + "]");
+				Serial.println("DEBUG: Incorrect");
+				Serial.println("DEBUG: Expected: [" + String(password[0]) + String(password[1]) + String(password[2]) + String(password[3]) + "]");
+				Serial.println("DEBUG: Got: [" + String(checkPassword[0]) + String(checkPassword[1]) + String(checkPassword[2]) + String(checkPassword[3]) + "]");
 			}
 			// Check complete
 			doCheck = false;
@@ -160,7 +166,7 @@ int main() {
 							state = setFirst;
 						}
 						else {
-							Serial.println("Door locked. Unlock door to enter new password");
+							Serial.println("DEBUG: Door locked. Unlock door to enter new password");
 							continue;
 						}
 					}
@@ -194,7 +200,7 @@ int main() {
 				// The password array is being modified as the user enters the new password
 				case(setFirst):
 					if (pressed == '#') {
-						Serial.println("# can't be the first character of a password");
+						Serial.println("DEBUG: # can't be the first character of a password");
 						state = setFirst;
 						continue;
 					}
