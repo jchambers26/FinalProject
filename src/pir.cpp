@@ -9,3 +9,10 @@ void initPIR() {
     DDRH &= ~(1 << PORTH6);
 }
 
+bool checkPIR() {
+    if (PINH & (1 << PINH6)) {
+        return true;
+    }
+    return false;
+}
+
