@@ -38,7 +38,7 @@ void lock_s(){
     PORTH |= (1 << PH5);
     delayMs(1800);    //position
     PORTH &= ~(1 << PH5);
-    delayMs(18000);   //balance of 20000 cycle
+    delayMs(18000);   //balance of 20000 cyclelp
 }
 void unlock_s(){
 
